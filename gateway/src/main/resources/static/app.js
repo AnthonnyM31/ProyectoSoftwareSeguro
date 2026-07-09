@@ -100,9 +100,14 @@ function sendSecureMessage() {
         },
         body: JSON.stringify(payload)
     })
-    .then(response => {
+    .then(async response => {
         if (!response.ok) {
-            throw new Error("HTTP status " + response.status);
+            try {
+                const errorData = await response.json();
+                throw new Error(errorData.error || errorData.mensaje || ("HTTP status " + response.status));
+            } catch (e) {
+                throw new Error(e.message || ("HTTP status " + response.status));
+            }
         }
         return response.json();
     })
