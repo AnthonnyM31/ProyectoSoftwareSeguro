@@ -1,0 +1,58 @@
+dn: ou=users,dc=tita,dc=com
+objectClass: organizationalUnit
+ou: users
+
+dn: uid=admin,ou=users,dc=tita,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: Admin Tita
+sn: Tita
+uid: admin
+mail: admin@tita.com
+userPassword: admin1234
+
+dn: uid=bodeguero,ou=users,dc=tita,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: Bodeguero Tita
+sn: Tita
+uid: bodeguero
+mail: bodeguero@tita.com
+userPassword: bodeguero1234
+
+dn: uid=chofer,ou=users,dc=tita,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: Chofer Tita
+sn: Tita
+uid: chofer
+mail: chofer@tita.com
+userPassword: chofer1234
+
+dn: ou=groups,dc=tita,dc=com
+objectClass: organizationalUnit
+ou: groups
+
+dn: cn=ADMINISTRADOR,ou=groups,dc=tita,dc=com
+objectClass: top
+objectClass: groupOfNames
+cn: ADMINISTRADOR
+member: uid=admin,ou=users,dc=tita,dc=com
+
+dn: cn=BODEGUERO,ou=groups,dc=tita,dc=com
+objectClass: top
+objectClass: groupOfNames
+cn: BODEGUERO
+member: uid=bodeguero,ou=users,dc=tita,dc=com
+
+dn: cn=CHOFER,ou=groups,dc=tita,dc=com
+objectClass: top
+objectClass: groupOfNames
+cn: CHOFER
+member: uid=chofer,ou=users,dc=tita,dc=com

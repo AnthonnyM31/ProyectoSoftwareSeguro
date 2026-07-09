@@ -1,0 +1,11 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: sistema-a
+
+app:
+  vault:
+    url: ${VAULT_URL:http://vault:8200}
+    token: ${VAULT_TOKEN:tita-root-token}

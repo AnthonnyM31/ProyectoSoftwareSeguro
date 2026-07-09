@@ -1,0 +1,36 @@
+# Maven Build Artifacts
+**/target/
+**/pom.xml.tag
+**/pom.xml.releaseBackup
+**/pom.xml.next
+**/pom.xml.versionsBackup
+**/release.properties
+**/dependency-reduced-pom.xml
+**/buildNumber.properties
+**/.mvn/timing.properties
+**/.mvn/wrapper/maven-wrapper.jar
+
+# IDEs and Editors
+.idea/
+*.iml
+*.iws
+.classpath
+.project
+.settings/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.metadata/
+
+# OS/System files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Log files
+*.log
+**/logs/
+
+# Secrets & Environment
+**/.env
+**/secrets/

@@ -1,0 +1,44 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: sistema-a
+          uri: http://sistema-a:8081
+          predicates:
+            - Path=/api/a/**
+        - id: sistema-b
+          uri: http://sistema-b:8082
+          predicates:
+            - Path=/api/b/**
+        - id: keycloak
+          uri: http://keycloak:8080
+          predicates:
+            - Path=/realms/**, /resources/**, /js/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+
+app:
+  keycloak:
+    jwks-uri: ${KEYCLOAK_JWKS_URI:http://keycloak:8080/realms/tita-realm/protocol/openid-connect/certs}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

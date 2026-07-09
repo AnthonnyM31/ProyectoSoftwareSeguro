@@ -1,0 +1,102 @@
+services:
+  openldap:
+    image: osixia/openldap:1.5.0
+    container_name: safe-openldap
+    restart: unless-stopped
+    ports:
+      - "389:389"
+      - "636:636"
+    environment:
+      LDAP_ORGANISATION: "Tita"
+      LDAP_DOMAIN: "tita.com"
+      LDAP_ADMIN_PASSWORD: "admin"
+      LDAP_TLS: "false"
+    volumes:
+      - ./ldap-bootstrap:/container/service/slapd/assets/config/bootstrap/ldif/custom
+    command: --copy-service --loglevel debug
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.0
+    container_name: safe-keycloak
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_PROXY_HEADERS: "xforwarded"
+      KC_HOSTNAME_STRICT: "false"
+    ports:
+      - "8089:8080"
+    volumes:
+      - ./keycloak-import:/opt/keycloak/data/import
+    depends_on:
+      - openldap
+    restart: unless-stopped
+
+  vault:
+    image: hashicorp/vault:1.15.2
+    container_name: safe-vault
+    ports:
+      - "8200:8200"
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: tita-root-token
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "vault status -address=http://127.0.0.1:8200"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  vault-init:
+    image: hashicorp/vault:1.15.2
+    container_name: safe-vault-init
+    depends_on:
+      vault:
+        condition: service_healthy
+    entrypoint: >
+      sh -c "
+        export VAULT_ADDR='http://vault:8200' &&
+        export VAULT_TOKEN='tita-root-token' &&
+        echo 'Checking vault status...' &&
+        vault secrets enable transit || echo 'Transit already enabled' &&
+        vault write -f transit/keys/tita-key || echo 'Key already exists'
+      "
+
+  gateway:
+    build:
+      context: ./gateway
+    container_name: safe-gateway
+    restart: unless-stopped
+    environment:
+      JWT_SECRET: safe-capstone-super-secret-key-2026
+      KEYCLOAK_JWKS_URI: http://keycloak:8080/realms/tita-realm/protocol/openid-connect/certs
+    depends_on:
+      - keycloak
+    ports:
+      - "8085:8080"
+
+  sistema-a:
+    build:
+      context: ./sistema-a
+    container_name: safe-sistema-a
+    restart: unless-stopped
+    environment:
+      VAULT_URL: http://vault:8200
+      VAULT_TOKEN: tita-root-token
+    depends_on:
+      vault:
+        condition: service_healthy
+
+  sistema-b:
+    build:
+      context: ./sistema-b
+    container_name: safe-sistema-b
+    restart: unless-stopped
+    environment:
+      VAULT_URL: http://vault:8200
+      VAULT_TOKEN: tita-root-token
+    depends_on:
+      vault:
+        condition: service_healthy

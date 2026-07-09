@@ -1,0 +1,277 @@
+{
+  "id": "tita-realm",
+  "realm": "tita-realm",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "ADMINISTRADOR",
+        "description": "Rol de administrador del sistema",
+        "composite": false
+      },
+      {
+        "name": "BODEGUERO",
+        "description": "Rol de bodeguero del sistema",
+        "composite": false
+      },
+      {
+        "name": "CHOFER",
+        "description": "Rol de chofer repartidor",
+        "composite": false
+      }
+    ]
+  },
+  "groups": [],
+  "clients": [
+    {
+      "clientId": "web-control",
+      "name": "Portal Web de Control Integrador",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "redirectUris": [
+        "http://localhost:8080/*",
+        "http://127.0.0.1:8080/*",
+        "http://localhost:8085/*",
+        "http://127.0.0.1:8085/*"
+      ],
+      "webOrigins": [
+        "*"
+      ],
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "roles",
+        "profile",
+        "email"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "username": "admin",
+      "email": "admin@tita.com",
+      "firstName": "Admin",
+      "lastName": "Tita",
+      "enabled": true,
+      "emailVerified": true,
+      "federationLink": "ldap-federation",
+      "requiredActions": [
+        "CONFIGURE_TOTP"
+      ],
+      "realmRoles": [
+        "ADMINISTRADOR"
+      ],
+      "clientRoles": {}
+    },
+    {
+      "username": "bodeguero",
+      "email": "bodeguero@tita.com",
+      "firstName": "Bodeguero",
+      "lastName": "Tita",
+      "enabled": true,
+      "emailVerified": true,
+      "federationLink": "ldap-federation",
+      "requiredActions": [
+        "CONFIGURE_TOTP"
+      ],
+      "realmRoles": [
+        "BODEGUERO"
+      ],
+      "clientRoles": {}
+    },
+    {
+      "username": "chofer",
+      "email": "chofer@tita.com",
+      "firstName": "Chofer",
+      "lastName": "Tita",
+      "enabled": true,
+      "emailVerified": true,
+      "federationLink": "ldap-federation",
+      "requiredActions": [
+        "CONFIGURE_TOTP"
+      ],
+      "realmRoles": [
+        "CHOFER"
+      ],
+      "clientRoles": {}
+    }
+  ],
+  "components": {
+    "org.keycloak.storage.UserStorageProvider": [
+      {
+        "id": "ldap-federation",
+        "name": "ldap-federation",
+        "providerId": "ldap",
+        "subComponents": {
+          "org.keycloak.storage.ldap.mappers.LDAPStorageMapper": [
+            {
+              "id": "username-mapper",
+              "name": "username",
+              "providerId": "user-attribute-ldap-mapper",
+              "config": {
+                "ldap.attribute": [
+                  "uid"
+                ],
+                "is.mandatory.in.ldap": [
+                  "true"
+                ],
+                "always.read.from.ldap": [
+                  "false"
+                ],
+                "user.model.attribute": [
+                  "username"
+                ]
+              }
+            },
+            {
+              "id": "email-mapper",
+              "name": "email",
+              "providerId": "user-attribute-ldap-mapper",
+              "config": {
+                "ldap.attribute": [
+                  "mail"
+                ],
+                "is.mandatory.in.ldap": [
+                  "false"
+                ],
+                "always.read.from.ldap": [
+                  "false"
+                ],
+                "user.model.attribute": [
+                  "email"
+                ]
+              }
+            },
+            {
+              "id": "first-name-mapper",
+              "name": "first name",
+              "providerId": "user-attribute-ldap-mapper",
+              "config": {
+                "ldap.attribute": [
+                  "cn"
+                ],
+                "is.mandatory.in.ldap": [
+                  "true"
+                ],
+                "always.read.from.ldap": [
+                  "false"
+                ],
+                "user.model.attribute": [
+                  "firstName"
+                ]
+              }
+            },
+            {
+              "id": "last-name-mapper",
+              "name": "last name",
+              "providerId": "user-attribute-ldap-mapper",
+              "config": {
+                "ldap.attribute": [
+                  "sn"
+                ],
+                "is.mandatory.in.ldap": [
+                  "true"
+                ],
+                "always.read.from.ldap": [
+                  "false"
+                ],
+                "user.model.attribute": [
+                  "lastName"
+                ]
+              }
+            },
+            {
+              "id": "role-ldap-mapper",
+              "name": "roles",
+              "providerId": "role-ldap-mapper",
+              "config": {
+                "roles.dn": [
+                  "ou=groups,dc=tita,dc=com"
+                ],
+                "role.name.ldap.attribute": [
+                  "cn"
+                ],
+                "role.object.classes": [
+                  "groupOfNames"
+                ],
+                "membership.ldap.attribute": [
+                  "member"
+                ],
+                "membership.attribute.type": [
+                  "DN"
+                ],
+                "user.roles.retrieve.strategy": [
+                  "LOAD_ROLES_BY_MEMBER_ATTRIBUTE"
+                ],
+                "mode": [
+                  "READ_ONLY"
+                ],
+                "use.realm.roles.mapping": [
+                  "true"
+                ]
+              }
+            }
+          ]
+        },
+        "config": {
+          "connectionUrl": [
+            "ldap://openldap:389"
+          ],
+          "usersDn": [
+            "ou=users,dc=tita,dc=com"
+          ],
+          "bindDn": [
+            "cn=admin,dc=tita,dc=com"
+          ],
+          "bindCredential": [
+            "admin"
+          ],
+          "vendor": [
+            "other"
+          ],
+          "usernameLDAPAttribute": [
+            "uid"
+          ],
+          "uuidLDAPAttribute": [
+            "entryUUID"
+          ],
+          "userObjectClasses": [
+            "inetOrgPerson, organizationalPerson, person"
+          ],
+          "rdnLDAPAttribute": [
+            "uid"
+          ],
+          "editMode": [
+            "READ_ONLY"
+          ],
+          "importEnabled": [
+            "true"
+          ],
+          "syncRegistrations": [
+            "false"
+          ],
+          "authType": [
+            "simple"
+          ],
+          "searchScope": [
+            "1"
+          ],
+          "useTruststoreSpi": [
+            "ldapsOnly"
+          ],
+          "connectionTimeout": [
+            "5000"
+          ]
+        }
+      }
+    ]
+  }
+}

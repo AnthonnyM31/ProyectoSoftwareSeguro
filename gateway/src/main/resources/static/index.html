@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consola de Control Seguro — Integrador OIDC & KMS</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Keycloak JS Adapter from Server to ensure exact version match -->
+    <script src="/js/keycloak.js"></script>
+</head>
+<body>
+    <div class="background-decor">
+        <div class="blur-circle circle-1"></div>
+        <div class="blur-circle circle-2"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="glass-panel main-header">
+            <div class="logo">
+                <span class="logo-icon">🛡️</span>
+                <h1>SafeIntegration</h1>
+            </div>
+            <div class="user-profile" id="userProfile" style="display: none;">
+                <div class="user-info">
+                    <span class="user-name" id="profileName">Cargando...</span>
+                    <span class="user-role badge" id="profileRole">Rol</span>
+                </div>
+                <button class="btn btn-danger" onclick="handleLogout()">Cerrar Sesión</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="dashboard-grid">
+            <!-- Left Panel: IAM & Security Status -->
+            <section class="glass-panel card">
+                <h2>Control de Identidad (Keycloak IAM)</h2>
+                <p class="description">Estado de la sesión autenticada mediante el protocolo OpenID Connect (OIDC) y Single Sign-On (SSO).</p>
+                
+                <div class="status-list">
+                    <div class="status-item">
+                        <span class="status-label">Proveedor IAM:</span>
+                        <span class="status-value">Keycloak Server (v24.0.0)</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Federación Activa:</span>
+                        <span class="status-value highlight">OpenLDAP Directory</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Segundo Factor (MFA):</span>
+                        <span class="status-value success">TOTP (Google Authenticator)</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Correo Usuario:</span>
+                        <span class="status-value" id="profileEmail">Cargando...</span>
+                    </div>
+                </div>
+
+                <div class="token-container">
+                    <h3>Token JWT de Sesión (Keycloak)</h3>
+                    <pre class="token-box" id="tokenBox">Cargando token...</pre>
+                </div>
+            </section>
+
+            <!-- Right Panel: KMS Criptografía -->
+            <section class="glass-panel card">
+                <h2>Cifrado de Comunicación (Vault KMS)</h2>
+                <p class="description">Envía tramas de datos del **Sistema A (Emisor)** al **Sistema B (Receptor)**. Los datos se cifran en tránsito usando HashiCorp Vault.</p>
+
+                <div class="form-group">
+                    <label for="plainMessage">Mensaje Plano (Cuerpo a enviar):</label>
+                    <textarea id="plainMessage" rows="3" placeholder="Escribe el mensaje plano aquí para cifrar con el KMS...">{"pedidoId": "PED-2026", "materia": "Vidrio LAMINADO 6mm", "dimensiones": "120x80cm", "cantidad": 5}</textarea>
+                </div>
+
+                <button class="btn btn-primary" id="btnSend" onclick="sendSecureMessage()">Enviar Seguro (KMS Cifrado)</button>
+
+                <!-- Flow Visualizer -->
+                <div class="kms-visualizer" id="kmsVisualizer" style="display: none;">
+                    <div class="visual-step">
+                        <h4>1. Payload Plano (Enviado a Sistema A)</h4>
+                        <pre class="code-box" id="stepPlain">Cargando...</pre>
+                    </div>
+                    <div class="visual-step arrow">⬇️ Cifrado por Sistema A usando Vault KMS ⬇️</div>
+                    <div class="visual-step highlight-step">
+                        <h4>2. Trama Cifrada en Tránsito (Ciphertext)</h4>
+                        <pre class="code-box ciphertext" id="stepCipher">Cargando...</pre>
+                    </div>
+                    <div class="visual-step arrow">⬇️ Descifrado por Sistema B usando Vault KMS ⬇️</div>
+                    <div class="visual-step success-step">
+                        <h4>3. Respuesta de Sistema B (Decoded Plaintext)</h4>
+                        <pre class="code-box" id="stepDecoded">Cargando...</pre>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <p>Desarrollo de Software Seguro (ISWZ3206) — UDLA 2026</p>
+        </footer>
+    </div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
