@@ -69,16 +69,19 @@ function handleLogout() {
 
 // Disparador del KMS: Llama a Sistema A enviando el payload
 function sendSecureMessage() {
-    const rawMessage = document.getElementById("plainMessage").value;
+    const pedidoId = document.getElementById("pedidoId").value;
+    const materia = document.getElementById("materia").value;
+    const dimensiones = document.getElementById("dimensiones").value;
+    const cantidad = parseInt(document.getElementById("cantidad").value) || 0;
+
+    const payload = {
+        pedidoId: pedidoId,
+        materia: materia,
+        dimensiones: dimensiones,
+        cantidad: cantidad
+    };
+
     const btnSend = document.getElementById("btnSend");
-    
-    let payload = null;
-    try {
-        payload = JSON.parse(rawMessage);
-    } catch (e) {
-        // Si no es JSON valido, enviarlo como un objeto con propiedad texto
-        payload = { "texto": rawMessage };
-    }
 
     // Mostrar visualizador y resetear pasos anterior
     document.getElementById("kmsVisualizer").style.display = "flex";

@@ -69,9 +69,23 @@
                 <h2>Cifrado de Comunicación (Vault KMS)</h2>
                 <p class="description">Envía tramas de datos del **Sistema A (Emisor)** al **Sistema B (Receptor)**. Los datos se cifran en tránsito usando HashiCorp Vault.</p>
 
-                <div class="form-group">
-                    <label for="plainMessage">Mensaje Plano (Cuerpo a enviar):</label>
-                    <textarea id="plainMessage" rows="3" placeholder="Escribe el mensaje plano aquí para cifrar con el KMS...">{"pedidoId": "PED-2026", "materia": "Vidrio LAMINADO 6mm", "dimensiones": "120x80cm", "cantidad": 5}</textarea>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="pedidoId">ID del Pedido:</label>
+                        <input type="text" id="pedidoId" value="PED-2026" placeholder="Ej: PED-100">
+                    </div>
+                    <div class="form-group">
+                        <label for="materia">Material / Producto:</label>
+                        <input type="text" id="materia" value="Vidrio LAMINADO 6mm" placeholder="Ej: Vidrio Templado">
+                    </div>
+                    <div class="form-group">
+                        <label for="dimensiones">Dimensiones:</label>
+                        <input type="text" id="dimensiones" value="120x80cm" placeholder="Ej: 100x100cm">
+                    </div>
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad:</label>
+                        <input type="number" id="cantidad" value="5" min="1" placeholder="Ej: 10">
+                    </div>
                 </div>
 
                 <button class="btn btn-primary" id="btnSend" onclick="sendSecureMessage()">Enviar Seguro (KMS Cifrado)</button>
